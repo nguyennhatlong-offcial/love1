@@ -226,3 +226,14 @@ export default function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="z-10 text-center p-6 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10"
+          >
+            <h2 className={`text-5xl font-bold mb-4 bg-gradient-to-r ${currentTheme.textGradient} bg-clip-text text-transparent`} style={{ fontFamily: "'Dancing Script', cursive" }}>
+              Yêu cậu 3000! ❤️
+            </h2>
+            <p className="text-slate-300">Biết ngay là cậu sẽ đồng ý mà!</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
