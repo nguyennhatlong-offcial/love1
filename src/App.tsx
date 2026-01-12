@@ -116,4 +116,16 @@ export default function App() {
         <p 
           // SỬA Ở ĐÂY: text-2xl -> text-4xl
           className="text-2xl md:text-4xl text-gray-100 leading-relaxed font-medium"
-          style={{ fontFamily: "'Dancing Script', cursive"
+          style={{ fontFamily: "'Dancing Script', cursive" }}
+        >
+          "Vũ trụ bao la thế này,<br className="hidden md:block" />
+          nhưng tớ chỉ nhìn thấy mỗi nụ cười của cậu thôi. 🥰"
+        </p>
+        
+        <p className="text-sm md:text-lg text-gray-400 mt-8 opacity-90 tracking-widest uppercase">
+          (Chạm nhẹ màn hình để nghe nhạc)
+        </p>
+      </motion.div>
+    </div>
+  );
+}
