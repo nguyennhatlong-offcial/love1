@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-// Nếu em có component Canvas/Vũ trụ, hãy import ở đây (ví dụ: import Universe from './Universe';)
+// Nếu em có file code Vũ trụ (ví dụ Universe.tsx), hãy import vào đây.
+// import Universe from './Universe'; 
 
 export default function App() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   useEffect(() => {
-    // Hàm xử lý phát nhạc
+    // --- XỬ LÝ PHÁT NHẠC ---
     const playMusic = async () => {
       if (audioRef.current && !isAudioPlaying) {
         audioRef.current.volume = 0.5; // Âm lượng 50%
@@ -15,19 +16,19 @@ export default function App() {
           await audioRef.current.play();
           setIsAudioPlaying(true);
         } catch (err) {
-          console.log("Trình duyệt chặn Autoplay, chờ tương tác người dùng...");
+          console.log("Trình duyệt chặn Autoplay. Đang chờ người dùng chạm vào màn hình...");
         }
       }
     };
 
-    // 1. Thử phát ngay lập tức khi load xong
+    // 1. Thử phát ngay khi vào web
     playMusic();
 
-    // 2. Bẫy sự kiện: Nếu bước 1 thất bại, chỉ cần người dùng chạm/click bất kỳ đâu là nhạc phát ngay
+    // 2. Nếu bị chặn, đợi người dùng chạm nhẹ bất kỳ đâu là phát luôn
     const handleInteraction = () => {
       playMusic();
-      // Sau khi phát được rồi thì gỡ sự kiện ra cho nhẹ máy
       if (audioRef.current && !audioRef.current.paused) {
+        // Nếu nhạc đã chạy thì gỡ bỏ sự kiện này cho nhẹ máy
         window.removeEventListener('click', handleInteraction);
         window.removeEventListener('touchstart', handleInteraction);
       }
@@ -45,94 +46,62 @@ export default function App() {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black text-white">
       
-      {/* --- PHẦN NHẠC (Load từ thư mục public để siêu nhanh) --- */}
+      {/* --- 1. FILE NHẠC --- */}
+      {/* Nhớ đảm bảo file music.mp3 nằm trong thư mục 'public' */}
       <audio 
         ref={audioRef} 
-        src="/music.mp3"  
+        src="/music.mp3" 
         autoPlay 
         loop 
-        preload="auto"
+        preload="auto" 
       />
 
-      {/* --- PHẦN GIAO DIỆN CHÍNH --- */}
-      {/* Em dán code Vũ trụ / Trái tim 3D của em vào khoảng trống này */}
-      const UniverseBackground = () => {
-  const stars = Array.from({ length: 60 }).map((_, i) => ({
-    id: i,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    size: Math.random() * 3 + 1,
-    duration: Math.random() * 3 + 2,
-    delay: Math.random() * 5,
-  }));
+      {/* --- 2. NỀN VŨ TRỤ / TRÁI TIM 3D --- */}
+      <div className="absolute inset-0 z-0">
+          
+          {/* ======================================================== */}
+          {/* DÁN CODE VŨ TRỤ HOẶC COMPONENT CỦA EM VÀO DƯỚI DÒNG NÀY */}
+          
+          {/* Ví dụ: <UniverseCanvas /> */}
+           <div className="w-full h-full flex items-center justify-center">
+              <p className="animate-pulse text-gray-500">
+                (Chỗ này để hiển thị Vũ trụ/Trái tim của Lương)
+              </p>
+           </div>
+          
+          {/* ======================================================== */}
 
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {stars.map((star) => (
-        <motion.div
-          key={star.id}
-          className="absolute bg-white rounded-full opacity-70"
-          style={{ top: star.top, left: star.left, width: star.size, height: star.size }}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [1, 1.5, 1] }}
-          transition={{ duration: star.duration, repeat: Infinity, delay: star.delay }}
-        />
-      ))}
-    </div>
-  );
-};
-
-// --- 2. BACKGROUND THIÊN NHIÊN (Lá & Đom đóm) ---
-const NatureBackground = () => {
-  const items = Array.from({ length: 40 }).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    type: Math.random() > 0.5 ? 'leaf' : 'firefly',
-    duration: Math.random() * 10 + 10,
-  }));
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {items.map((item) => (
-        <motion.div
-          key={item.id}
-          className={`absolute ${item.type === 'firefly' ? 'w-2 h-2 bg-yellow-400 blur-sm rounded-full' : 'text-emerald-300/40'}`}
-          style={{ left: `${item.x}%`, top: `${item.y}%` }}
-          animate={{ 
-            y: [0, -100, 0], 
-            x: [0, Math.random() * 50 - 25, 0],
-            opacity: [0, 1, 0],
-            rotate: item.type === 'leaf' ? 360 : 0
-          }}
-          transition={{ duration: item.duration, repeat: Infinity, ease: "linear" }}
-        >
-          {item.type === 'leaf' && (Math.random() > 0.5 ? <Leaf size={20} /> : <Flower2 size={16} />)}
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
-          {/* Ví dụ placeholder, em xóa dòng này thay bằng code của em */}
-          <h1 className="text-pink-500 animate-pulse">Đang tải vũ trụ...</h1> 
       </div>
 
-
-      {/* --- PHẦN TEXT / THƯ (Đoạn này anh sửa lỗi thiếu dấu đóng thẻ cho em) --- */}
+      {/* --- 3. BỨC THƯ TỎ TÌNH --- */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5, delay: 0.5 }}
-        className="absolute bottom-20 left-0 right-0 z-10 text-center p-6 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 mx-auto max-w-lg"
+        transition={{ duration: 1.5, delay: 1 }} // Hiện ra sau 1 giây
+        className="absolute bottom-10 left-4 right-4 md:bottom-20 md:left-1/3 md:right-1/3 z-10 p-6 bg-black/40 backdrop-blur-md rounded-2xl border border-white/20 text-center shadow-[0_0_30px_rgba(236,72,153,0.3)]"
       >
-        <h2 className="text-2xl font-bold mb-2">Gửi cậu ✨</h2>
-        <p className="text-gray-200">
-          Đây là vũ trụ nhỏ tớ làm tặng cậu. 
-          <br />
-          (Chạm nhẹ vào màn hình nếu nhạc chưa phát nhé)
+        <h1 
+          className="text-4xl font-bold mb-3 text-pink-400 drop-shadow-lg"
+          style={{ fontFamily: "'Dancing Script', cursive" }}
+        >
+          Gửi cậu ✨
+        </h1>
+        
+        <p 
+          className="text-xl text-gray-100 leading-relaxed"
+          style={{ fontFamily: "'Dancing Script', cursive" }}
+        >
+          Vũ trụ bao la thế này,<br/>
+          nhưng tớ chỉ nhìn thấy mỗi nụ cười của cậu thôi. ❤️
         </p>
-      </motion.div> 
-      {/* Đã đóng thẻ motion.div cẩn thận */}
+
+        <p 
+          className="text-xs text-gray-400 mt-4 opacity-80"
+          style={{ fontFamily: "'Quicksand', sans-serif" }}
+        >
+          (Chạm nhẹ vào màn hình để nghe nhạc nhé)
+        </p>
+      </motion.div>
 
     </div>
   );
