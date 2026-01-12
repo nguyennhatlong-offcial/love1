@@ -1,131 +1,134 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-// --- PHẦN 1: TẠO VŨ TRỤ (Giữ nguyên không đổi) ---
+// --- COMPONENT NỀN VŨ TRỤ & HÀO QUANG ---
 const UniverseBackground = () => {
-  const stars = Array.from({ length: 60 }).map((_, i) => ({
+  // Tạo sao ngẫu nhiên
+  const stars = Array.from({ length: 50 }).map((_, i) => ({
     id: i,
     top: `${Math.random() * 100}%`,
     left: `${Math.random() * 100}%`,
-    size: Math.random() * 3 + 1,
-    duration: Math.random() * 3 + 2,
-    delay: Math.random() * 2
+    size: Math.random() * 2 + 1,
+    duration: Math.random() * 4 + 2,
   }));
 
   return (
-    <div className="w-full h-full relative overflow-hidden bg-black">
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black via-purple-900/20 to-black z-0"></div>
-      
+    <div className="fixed inset-0 overflow-hidden bg-[#0a0a0a]">
+      {/* Hào quang trung tâm màu hồng tím */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-purple-600/20 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow delay-700"></div>
+
+      {/* Các vì sao lấp lánh */}
       {stars.map((star) => (
         <motion.div
           key={star.id}
-          className="absolute bg-white rounded-full shadow-[0_0_10px_white]"
+          className="absolute bg-white rounded-full"
           style={{
             top: star.top,
             left: star.left,
             width: star.size,
             height: star.size,
+            boxShadow: `0 0 ${star.size * 2}px rgba(255,255,255,0.8)`
           }}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [1, 1.5, 1] }}
+          animate={{ opacity: [0.1, 1, 0.1] }}
           transition={{
             duration: star.duration,
             repeat: Infinity,
-            delay: star.delay,
             ease: "easeInOut"
           }}
         />
       ))}
-      
-      {/* Trái tim nền xoay nhẹ */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-         <motion.div 
-           animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-           transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 2, repeat: Infinity } }}
-           className="w-96 h-96 border border-pink-500/20 rounded-full flex items-center justify-center shadow-[0_0_80px_rgba(236,72,153,0.2)]"
-         >
-         </motion.div>
-      </div>
     </div>
   );
 };
 
-// --- PHẦN 2: APP CHÍNH (Đã sửa bảng chữ to đùng) ---
+// --- COMPONENT CHÍNH ---
 export default function App() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
-  useEffect(() => {
-    const playMusic = async () => {
-      if (audioRef.current && !isAudioPlaying) {
-        audioRef.current.volume = 0.5;
+  // Xử lý phát nhạc
+  const handlePlayMusic = async () => {
+    if (audioRef.current) {
+      if (isAudioPlaying) {
+        audioRef.current.pause();
+        setIsAudioPlaying(false);
+      } else {
         try {
+          audioRef.current.volume = 0.6;
           await audioRef.current.play();
           setIsAudioPlaying(true);
         } catch (err) {
-          // Chờ tương tác
+          console.error("Không thể tự động phát nhạc:", err);
         }
       }
-    };
-    playMusic();
-    const handleInteraction = () => {
-      playMusic();
-      if (audioRef.current && !audioRef.current.paused) {
-        window.removeEventListener('click', handleInteraction);
-        window.removeEventListener('touchstart', handleInteraction);
-      }
-    };
-    window.addEventListener('click', handleInteraction);
-    window.addEventListener('touchstart', handleInteraction);
-    return () => {
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
-    };
-  }, [isAudioPlaying]);
+    }
+  };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black text-white font-sans">
+    // Container chính: Căn giữa mọi thứ
+    <div className="relative w-full h-screen flex items-center justify-center overflow-hidden antialiased font-sans">
       
-      <audio ref={audioRef} src="/music.mp3" autoPlay loop preload="auto" />
+      {/* File nhạc (Nhớ thay file music.mp3 vào thư mục public) */}
+      <audio ref={audioRef} src="/music.mp3" loop preload="auto" />
 
-      <div className="absolute inset-0 z-0">
-         <UniverseBackground />
-      </div>
+      {/* Nền vũ trụ */}
+      <UniverseBackground />
 
-      {/* --- BẢNG CHỮ TO ĐÙNG --- */}
+      {/* Tấm thiệp kính mờ (The Confession Card) */}
       <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, delay: 0.5 }}
-        // SỬA Ở ĐÂY: w-[95%] (rộng), max-w-6xl (cực đại), top-16 (đưa lên trên)
-        className="absolute top-16 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-20 
-                   p-10 md:p-14 
-                   bg-black/30 backdrop-blur-xl rounded-3xl 
-                   border border-pink-400/30 
-                   text-center shadow-[0_0_50px_rgba(236,72,153,0.4)]"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+        onClick={handlePlayMusic}
+        className="relative z-10 w-[90%] max-w-2xl p-10 md:p-14
+                   bg-white/5 backdrop-blur-[30px] 
+                   border border-white/10 rounded-[40px]
+                   shadow-[0_20px_60px_-15px_rgba(236,72,153,0.3)]
+                   text-center cursor-pointer group
+                   transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_30px_80px_-15px_rgba(236,72,153,0.5)]"
       >
-        <div className="mb-6 text-6xl animate-bounce">💖</div>
+        {/* Icon trái tim đập */}
+        <div className="mb-8">
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="inline-block text-5xl drop-shadow-[0_0_20px_rgba(244,114,182,0.8)]"
+          >
+            💖
+          </motion.div>
+        </div>
         
+        {/* Tiêu đề */}
         <h1 
-          // SỬA Ở ĐÂY: text-5xl (mobile) -> text-7xl (PC)
-          className="text-5xl md:text-8xl font-bold mb-6 text-pink-400 drop-shadow-[0_0_15px_rgba(236,72,153,0.8)]"
+          className="text-5xl md:text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 drop-shadow-sm"
           style={{ fontFamily: "'Dancing Script', cursive" }}
         >
           Gửi cậu ✨
         </h1>
         
-        <p 
-          // SỬA Ở ĐÂY: text-2xl -> text-4xl
-          className="text-2xl md:text-4xl text-gray-100 leading-relaxed font-medium"
-          style={{ fontFamily: "'Dancing Script', cursive" }}
-        >
-          "Vũ trụ bao la thế này,<br className="hidden md:block" />
-          nhưng tớ chỉ nhìn thấy mỗi nụ cười của cậu thôi. 🥰"
-        </p>
+        {/* Nội dung thư */}
+        <div className="space-y-4 mb-10">
+          <p 
+            className="text-2xl md:text-3xl text-white/90 leading-relaxed font-medium drop-shadow-md"
+            style={{ fontFamily: "'Dancing Script', cursive" }}
+          >
+            "Vũ trụ bao la thế này,<br />
+            nhưng tớ chỉ nhìn thấy mỗi nụ cười của cậu thôi. 🥰"
+          </p>
+        </div>
         
-        <p className="text-sm md:text-lg text-gray-400 mt-8 opacity-90 tracking-widest uppercase">
-          (Chạm nhẹ màn hình để nghe nhạc)
-        </p>
+        {/* Lời nhắn cuối */}
+        <div className="text-sm md:text-base text-pink-200/70 tracking-widest uppercase font-semibold flex items-center justify-center gap-2 group-hover:text-pink-200 transition-colors">
+          <span>(Chạm nhẹ để {isAudioPlaying ? 'dừng' : 'nghe'} nhạc)</span>
+          <motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
+            🎵
+          </motion.span>
+        </div>
       </motion.div>
+      
+      {/* Credit nhỏ xíu ở dưới cùng */}
+      <div className="absolute bottom-4 text-white/30 text-xs">Made with ❤️ by Lương. Inbox: <a href="https://www.facebook.com/phmducluong" target="_blank">Phạm Đức Lương</a> </div>
     </div>
   );
 }
