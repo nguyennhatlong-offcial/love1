@@ -56,7 +56,62 @@ export default function App() {
 
       {/* --- PHẦN GIAO DIỆN CHÍNH --- */}
       {/* Em dán code Vũ trụ / Trái tim 3D của em vào khoảng trống này */}
-      
+      const UniverseBackground = () => {
+  const stars = Array.from({ length: 60 }).map((_, i) => ({
+    id: i,
+    top: `${Math.random() * 100}%`,
+    left: `${Math.random() * 100}%`,
+    size: Math.random() * 3 + 1,
+    duration: Math.random() * 3 + 2,
+    delay: Math.random() * 5,
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {stars.map((star) => (
+        <motion.div
+          key={star.id}
+          className="absolute bg-white rounded-full opacity-70"
+          style={{ top: star.top, left: star.left, width: star.size, height: star.size }}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [1, 1.5, 1] }}
+          transition={{ duration: star.duration, repeat: Infinity, delay: star.delay }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// --- 2. BACKGROUND THIÊN NHIÊN (Lá & Đom đóm) ---
+const NatureBackground = () => {
+  const items = Array.from({ length: 40 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    type: Math.random() > 0.5 ? 'leaf' : 'firefly',
+    duration: Math.random() * 10 + 10,
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {items.map((item) => (
+        <motion.div
+          key={item.id}
+          className={`absolute ${item.type === 'firefly' ? 'w-2 h-2 bg-yellow-400 blur-sm rounded-full' : 'text-emerald-300/40'}`}
+          style={{ left: `${item.x}%`, top: `${item.y}%` }}
+          animate={{ 
+            y: [0, -100, 0], 
+            x: [0, Math.random() * 50 - 25, 0],
+            opacity: [0, 1, 0],
+            rotate: item.type === 'leaf' ? 360 : 0
+          }}
+          transition={{ duration: item.duration, repeat: Infinity, ease: "linear" }}
+        >
+          {item.type === 'leaf' && (Math.random() > 0.5 ? <Leaf size={20} /> : <Flower2 size={16} />)}
+        </motion.div>
+      ))}
+    </div>
+  );
+};
       <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
           {/* Ví dụ placeholder, em xóa dòng này thay bằng code của em */}
           <h1 className="text-pink-500 animate-pulse">Đang tải vũ trụ...</h1> 
